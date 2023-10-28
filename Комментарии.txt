@@ -1,0 +1,114 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cctype>
+#include <limits>
+
+// Класс, представляющий обувь
+class Shoe {
+private:
+    std::string brand;
+    std::string model;
+    int size;
+    double price;
+
+public:
+    // Конструктор класса Shoe
+    Shoe(std::string brand, std::string model, int size, double price)
+        : brand(brand), model(model), size(size), price(price) {}
+
+    // Статические методы сравнения обуви по разным критериям
+    static bool compareByBrand(const Shoe& a, const Shoe& b) {
+        return a.getBrand() < b.getBrand();
+    }
+
+    static bool compareBySize(const Shoe& a, const Shoe& b) {
+        return a.size < b.size;
+    }
+
+    static bool compareByPrice(const Shoe& a, const Shoe& b) {
+        return a.price < b.price;
+    }
+
+    // Перегрузка оператора вывода для вывода информации о обуви
+    friend std::ostream& operator<<(std::ostream& out, const Shoe& shoe) {
+        out << "Бренд: " << shoe.brand << std::endl;
+        out << "Модель: " << shoe.model << std::endl;
+        out << "Размер: " << shoe.size << std::endl;
+        out << "Цена: " << shoe.price << std::endl;
+        return out;
+    }
+
+    // Метод для проверки наличия подстроки в строке (регистронезависимо)
+    static bool containsSubstring(const std::string& str, const std::string& substr) {
+        // ... (реализация метода)
+    }
+
+    // Метод для проверки наличия подстроки в бренде или модели обуви (регистронезависимо)
+    bool containsSubstring(const std::string& substr) const {
+        // ... (реализация метода)
+    }
+
+    // Метод для получения бренда обуви
+    std::string getBrand() const {
+        return brand;
+    }
+};
+
+// Класс, представляющий магазин обуви
+class ShoeStore {
+private:
+    std::vector<Shoe> shoes; // Вектор обуви в магазине
+
+public:
+    // Метод для вывода информации о всех обувных товарах в магазине
+    void printShoes() const {
+        // ... (реализация метода)
+    }
+
+    // Метод для добавления обуви в магазин
+    void addShoe(const Shoe& shoe) {
+        // ... (реализация метода)
+    }
+
+    // Метод для поиска обуви по подстроке в бренде или модели
+    std::vector<Shoe> searchShoes(const std::string& substr) const {
+        // ... (реализация метода)
+    }
+
+    // Методы для сортировки обуви по разным критериям
+    void sortShoesByBrand() {
+        // ... (реализация метода)
+    }
+
+    void sortShoesBySize() {
+        // ... (реализация метода)
+    }
+
+    void sortShoesByPrice() {
+        // ... (реализация метода)
+    }
+
+    // Метод для поиска обуви по бренду и модели
+    std::vector<Shoe> searchShoesByBrandAndModel(const std::string& brand, const std::string& model) const {
+        // ... (реализация метода)
+    }
+
+    // Метод для сохранения данных о обуви в файл
+    void saveToFile(const std::string& filename) const {
+        // ... (реализация метода)
+    }
+
+    // Метод для загрузки данных о обуви из файла
+    void loadFromFile(const std::string& filename) {
+        // ... (реализация метода)
+    }
+};
+
+// Главная функция программы
+int main() {
+    // ... (реализация функции)
+    return 0;
+}
