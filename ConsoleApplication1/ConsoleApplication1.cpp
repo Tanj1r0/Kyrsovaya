@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <fstream>
 #include <vector>
 #include <algorithm>
@@ -12,10 +12,11 @@ private:
     std::string model;
     int size;
     double price;
+    int quantity;
 
 public:
-    Shoe(std::string brand, std::string model, int size, double price)
-        : brand(brand), model(model), size(size), price(price) {}
+    Shoe(std::string brand, std::string model, int size, double price, int quantity)
+        : brand(brand), model(model), size(size), price(price), quantity(quantity) {}
 
     static bool compareByBrand(const Shoe& a, const Shoe& b) {
         return a.getBrand() < b.getBrand();
@@ -28,12 +29,16 @@ public:
     static bool compareByPrice(const Shoe& a, const Shoe& b) {
         return a.price < b.price;
     }
+    void setQuantity(int newQuantity) {
+        quantity = newQuantity;
+    }
 
     friend std::ostream& operator<<(std::ostream& out, const Shoe& shoe) {
         out << "Бренд: " << shoe.brand << std::endl;
         out << "Модель: " << shoe.model << std::endl;
         out << "Размер: " << shoe.size << std::endl;
-        out << "Цена: " << shoe.price << std::endl;
+        out << "Цена: " << std::to_string(shoe.price) << std::endl;
+        out << "Количество: " << std::to_string(shoe.quantity) << std::endl;
         return out;
     }
 
@@ -59,6 +64,22 @@ public:
     std::string getBrand() const {
         return brand;
     }
+
+    std::string getModel() const {
+        return model;
+    }
+
+    int getSize() const {
+        return size;
+    }
+
+    double getPrice() const {
+        return price;
+    }
+
+    int getQuantity() const {
+        return quantity;
+    }
 };
 
 class ShoeStore {
@@ -75,6 +96,23 @@ public:
 
     void addShoe(const Shoe& shoe) {
         shoes.push_back(shoe);
+    }
+
+    void addShoe(const Shoe& shoe, int quantity) {
+        // Проверяем, есть ли уже такая обувь в магазине
+        auto it = std::find_if(shoes.begin(), shoes.end(), [&](const Shoe& s) {
+            return s.getBrand() == shoe.getBrand() && s.getModel() == shoe.getModel() && s.getSize() == shoe.getSize();
+            });
+
+        if (it != shoes.end()) {
+            // Если обувь уже есть в магазине, увеличиваем количество пар
+            it->setQuantity(it->getQuantity() + quantity);
+        }
+        else {
+            // Иначе добавляем новую обувь в магазин
+            Shoe newShoe(shoe.getBrand(), shoe.getModel(), shoe.getSize(), shoe.getPrice(), quantity);
+            shoes.push_back(newShoe);
+        }
     }
 
     std::vector<Shoe> searchShoes(const std::string& substr) const {
@@ -132,9 +170,10 @@ public:
             std::string brand, model;
             int size;
             double price;
+            int quantity;
 
-            while (file >> brand >> model >> size >> price) {
-                Shoe shoe(brand, model, size, price);
+            while (file >> brand >> model >> size >> price >> quantity) {
+                Shoe shoe(brand, model, size, price, quantity);
                 addShoe(shoe);
             }
 
@@ -145,10 +184,25 @@ public:
             std::cerr << "Ошибка при открытии файла для чтения." << std::endl;
         }
     }
+
+    void removeShoe(const std::string& brand, const std::string& model, int size) {
+        auto it = std::find_if(shoes.begin(), shoes.end(), [&](const Shoe& s) {
+            return s.getBrand() == brand && s.getModel() == model && s.getSize() == size;
+            });
+
+        if (it != shoes.end() && it->getQuantity() > 1) {
+            // Если есть более одной пары такой обуви, уменьшаем количество пар на 1
+            it->setQuantity(it->getQuantity() - 1);
+        }
+        else if (it != shoes.end() && it->getQuantity() == 1) {
+            // Если есть только одна пара такой обуви, удаляем объект Shoe из вектора
+            shoes.erase(it);
+        }
+    }
 };
 
 int main() {
-    setlocale(LC_ALL, "rus");
+    system("chcp 1251");
     ShoeStore store;
 
     std::string filename;
@@ -181,7 +235,8 @@ int main() {
         std::cout << "3. Сортировка обуви по бренду" << std::endl;
         std::cout << "4. Сохранить данные в файл" << std::endl;
         std::cout << "5. Поиск по бренду и модели" << std::endl;
-        std::cout << "6. Выход" << std::endl;
+        std::cout << "6. Удалить обувь" << std::endl;
+        std::cout << "7. Выход" << std::endl;
 
         int choice;
         std::cout << "Введите номер пункта меню: ";
@@ -190,8 +245,7 @@ int main() {
         switch (choice) {
         case 1: {
             std::string brand, model;
-            int size;
-            double price;
+            int size, quantity; // Определение переменной quantity
 
             std::cout << "Введите бренд обуви: ";
             std::cin.ignore();
@@ -217,6 +271,14 @@ int main() {
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
 
+            std::cout << "Введите количество пар обуви: ";
+            while (!(std::cin >> quantity) || quantity <= 0) {
+                std::cout << "Некорректный ввод. Пожалуйста, введите положительное число для количества пар обуви: ";
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+
+            double price;
             std::cout << "Введите цену обуви: ";
             while (!(std::cin >> price) || price <= 0) {
                 std::cout << "Некорректный ввод. Пожалуйста, введите положительное число для цены: ";
@@ -224,7 +286,7 @@ int main() {
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
 
-            Shoe shoe(brand, model, size, price);
+            Shoe shoe(brand, model, size, price, quantity); // Передача значения quantity в конструктор
             store.addShoe(shoe);
             std::cout << "Обувь добавлена в магазин." << std::endl;
 
@@ -313,6 +375,24 @@ int main() {
             break;
         }
         case 6: {
+            std::string removeBrand, removeModel;
+            int removeSize;
+            std::cout << "Введите бренд обуви для удаления: ";
+            std::cin >> removeBrand;
+            std::cout << "Введите модель обуви для удаления: ";
+            std::cin >> removeModel;
+            std::cout << "Введите размер обуви для удаления: ";
+            std::cin >> removeSize;
+
+            store.removeShoe(removeBrand, removeModel, removeSize);
+            std::cout << "Обувь удалена из магазина." << std::endl;
+
+            std::cout << "Операция завершена. Нажмите Enter, чтобы продолжить...";
+            std::cin.get();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            break;
+        }
+        case 7: {
             std::cout << "Выход из программы." << std::endl;
             return 0;
         }
