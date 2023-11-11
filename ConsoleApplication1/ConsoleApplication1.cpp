@@ -34,11 +34,7 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& out, const Shoe& shoe) {
-        out << "Бренд: " << shoe.brand << std::endl;
-        out << "Модель: " << shoe.model << std::endl;
-        out << "Размер: " << shoe.size << std::endl;
-        out << "Цена: " << std::to_string(shoe.price) << std::endl;
-        out << "Количество: " << std::to_string(shoe.quantity) << std::endl;
+        out << shoe.brand << " " << shoe.model << " " << shoe.size << " " << shoe.price << " " << shoe.quantity;
         return out;
     }
 
@@ -89,8 +85,7 @@ private:
 public:
     void printShoes() const {
         for (const auto& shoe : shoes) {
-            std::cout << shoe;
-            std::cout << "-----------------------\n";
+            std::cout << shoe << std::endl;
         }
     }
 
@@ -153,8 +148,7 @@ public:
         std::ofstream file(filename);
         if (file.is_open()) {
             for (const auto& shoe : shoes) {
-                file << shoe;
-                file << "-----------------------\n";
+                file << shoe << std::endl;
             }
             file.close();
             std::cout << "Данные сохранены в файл: " << filename << std::endl;
@@ -303,8 +297,7 @@ int main() {
             std::vector<Shoe> searchResult = store.searchShoes(searchSubstring);
             std::cout << "Результаты поиска:" << std::endl;
             for (const auto& shoe : searchResult) {
-                std::cout << shoe;
-                std::cout << "-----------------------\n";
+                std::cout << shoe << std::endl;
             }
 
             std::cout << "Операция завершена. Нажмите Enter, чтобы продолжить...";
@@ -365,8 +358,7 @@ int main() {
             std::vector<Shoe> brandModelSearchResult = store.searchShoesByBrandAndModel(searchBrand, searchModel);
             std::cout << "Результаты поиска по бренду и модели:" << std::endl;
             for (const auto& shoe : brandModelSearchResult) {
-                std::cout << shoe;
-                std::cout << "-----------------------\n";
+                std::cout << shoe << std::endl;
             }
 
             std::cout << "Операция завершена. Нажмите Enter, чтобы продолжить...";
@@ -377,6 +369,7 @@ int main() {
         case 6: {
             std::string removeBrand, removeModel;
             int removeSize;
+            store.printShoes();
             std::cout << "Введите бренд обуви для удаления: ";
             std::cin >> removeBrand;
             std::cout << "Введите модель обуви для удаления: ";
