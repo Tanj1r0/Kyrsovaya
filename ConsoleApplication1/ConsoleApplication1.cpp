@@ -179,20 +179,24 @@ public:
         }
     }
 
-    void removeShoe(const std::string& brand, const std::string& model, int size) {
+    void removeShoe(const std::string& brand, const std::string& model, int size, int quantityToRemove) {
         auto it = std::find_if(shoes.begin(), shoes.end(), [&](const Shoe& s) {
             return s.getBrand() == brand && s.getModel() == model && s.getSize() == size;
             });
 
-        if (it != shoes.end() && it->getQuantity() > 1) {
-            // Если есть более одной пары такой обуви, уменьшаем количество пар на 1
-            it->setQuantity(it->getQuantity() - 1);
+        if (it != shoes.end() && it->getQuantity() > quantityToRemove) {
+            // Если есть достаточное количество пар обуви, уменьшаем количество пар на указанное количество
+            it->setQuantity(it->getQuantity() - quantityToRemove);
         }
-        else if (it != shoes.end() && it->getQuantity() == 1) {
-            // Если есть только одна пара такой обуви, удаляем объект Shoe из вектора
+        else if (it != shoes.end() && it->getQuantity() == quantityToRemove) {
+            // Если удаляем все имеющиеся пары такой обуви, удаляем объект Shoe из вектора
             shoes.erase(it);
         }
+        else {
+            std::cerr << "Ошибка: указанное количество пар для удаления превышает доступное количество." << std::endl;
+        }
     }
+
 };
 
 int main() {
@@ -368,7 +372,7 @@ int main() {
         }
         case 6: {
             std::string removeBrand, removeModel;
-            int removeSize;
+            int removeSize, quantityToRemove;
             store.printShoes();
             std::cout << "Введите бренд обуви для удаления: ";
             std::cin >> removeBrand;
@@ -376,8 +380,10 @@ int main() {
             std::cin >> removeModel;
             std::cout << "Введите размер обуви для удаления: ";
             std::cin >> removeSize;
+            std::cout << "Введите количество пар обуви для удаления: ";
+            std::cin >> quantityToRemove;
 
-            store.removeShoe(removeBrand, removeModel, removeSize);
+            store.removeShoe(removeBrand, removeModel, removeSize, quantityToRemove);
             std::cout << "Обувь удалена из магазина." << std::endl;
 
             std::cout << "Операция завершена. Нажмите Enter, чтобы продолжить...";
