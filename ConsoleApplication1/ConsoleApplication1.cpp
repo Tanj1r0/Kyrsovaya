@@ -147,9 +147,18 @@ public:
     void saveToFile(const std::string& filename) const {
         std::ofstream file(filename);
         if (file.is_open()) {
+            // Записываем строку заголовка с использованием точки с запятой
+            file << "Бренд;Модель;Размер;Цена;Количество" << std::endl;
+
+            // Записываем данные в формате CSV с использованием точки с запятой
             for (const auto& shoe : shoes) {
-                file << shoe << std::endl;
+                file << shoe.getBrand() << ";"
+                    << shoe.getModel() << ";"
+                    << shoe.getSize() << ";"
+                    << shoe.getPrice() << ";"
+                    << shoe.getQuantity() << std::endl;
             }
+
             file.close();
             std::cout << "Данные сохранены в файл: " << filename << std::endl;
         }
