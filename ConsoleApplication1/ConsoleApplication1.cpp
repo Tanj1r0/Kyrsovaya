@@ -247,7 +247,19 @@ int main() {
 
         int choice;
         std::cout << "Введите номер пункта меню: ";
-        std::cin >> choice;
+        while (!(std::cin >> choice)) {
+            std::cout << "Некорректный ввод. Пожалуйста, введите число: ";
+            std::cin.clear();  // очистка флагов ошибок
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // очистка буфера ввода
+        }
+
+        // Добавьте этот блок для обработки некорректного ввода
+        if (std::cin.fail()) {
+            std::cout << "Некорректный ввод. Пожалуйста, введите число." << std::endl;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;  // Вернуться к началу цикла
+        }
 
         switch (choice) {
         case 1: {
